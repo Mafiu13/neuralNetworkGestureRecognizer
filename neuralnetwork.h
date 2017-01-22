@@ -27,6 +27,7 @@ public:
     void computeBackPropagation();       //wsteczna propagacja
     void saveWeights(string filename);
     double getError();
+    bool isCorrectluRecognized();
     double* getOutputs();
 
 private:

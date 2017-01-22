@@ -72,24 +72,24 @@ void NeuralNetwork::initRandomWeights()
     srand(time(NULL));
     for(int i=0;i<hiddenL;++i)
     {
-        ihBiases[i]=(rand()%101)/100.0;
+        ihBiases[i]=(rand()%201 - 100)/100.0;
     }
     for(int i=0;i<outputL;++i)
     {
-        hoBiases[i]=(rand()%101)/100.0;
+        hoBiases[i]=(rand()%201 - 100)/100.0;
     }
     for(int i=0;i<inputL;++i)
     {
         for(int j=0;j<hiddenL;++j)
         {
-            ihWeights[i][j]=(rand()%101)/100.0;
+            ihWeights[i][j]=(rand()%201 - 100)/100.0;
         }
     }
     for(int i=0;i<hiddenL;++i)
     {
         for(int j=0;j<outputL;++j)
         {
-            hoWeights[i][j]=(rand()%101)/100.0;
+            hoWeights[i][j]=(rand()%201 - 100)/100.0;
         }
     }
 }
@@ -159,10 +159,14 @@ void NeuralNetwork::computeForward()
         {
             sum+=inputs[j]*ihWeights[j][i];
             //cout<<ihWeights[j][i]<<"\n";
+            //cout<<"input : "<<inputs[j]<<"\n";
         }
+        //cout<<"hidden sum before bies: "<<sum<<"\n";
         sum+=ihBiases[i];
-        //cout<<ihBiases[i]<<"\n";
+        //cout<<"hidden sum + bes: "<<sum<<"\n";
+        //cout<<"hidden biess: "<<ihBiases[i]<<"\n";
         ihOutputs[i]=sigmoidFunc(sum);
+        //cout<<"hidde + biess + sigm: "<<ihOutputs[i]<<"\n";
     }
     for(int i=0;i<outputL;++i)
     {
@@ -171,10 +175,12 @@ void NeuralNetwork::computeForward()
         {
             sum+=ihOutputs[j]*hoWeights[j][i];
             //cout<<hoWeights[j][i]<<"\n";
+            //cout<<"hidden output: "<<ihOutputs[j]<<"\n";
         }
         sum+=hoBiases[i];
-        //cout<<hoBiases[i]<<"\n";
+        //cout<<"output biess: "<<hoBiases[i]<<"\n";
         outputs[i]=sigmoidFunc(sum);
+        //cout<<"output + biess "<<outputs[i]<<"\n";
     }
 }
 
@@ -276,6 +282,27 @@ double NeuralNetwork::getError()
         sum += abs(desOutputs[i] - outputs[i]);
     }
     return sum;
+}
+
+bool NeuralNetwork::isCorrectluRecognized()
+{
+    double temp = 0.0;
+    int index = 0;
+    for (int i = 0; i < NR_OUTPUT_NEURONS; ++i)
+    {
+        if (temp < outputs[i])
+        {
+            temp = outputs[i];
+            index = i;
+        }
+    }
+    double temp2 = desOutputs[index];
+    if (temp2 == 1)
+    {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 double* NeuralNetwork::getOutputs()
